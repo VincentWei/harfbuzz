@@ -300,6 +300,18 @@ AM_CONDITIONAL(HAVE_ICU_BUILTIN, $have_icu && test "x$with_icu" = "xbuiltin")
 
 dnl ===========================================================================
 
+AC_ARG_WITH(exunicode,
+	[AS_HELP_STRING([--with-exunicode=@<:@yes/no@:>@],
+			[Use external Unicode functions @<:@default=no@:>@])],,
+	[with_exunicode=no])
+have_exunicode=false
+if test "x$with_exunicode" = "xyes"; then
+	have_exunicode=true
+fi
+if $have_exunicode; then
+	AC_DEFINE(HAVE_EXUNICODE, 1, [Have external Unicode functions])
+fi
+
 AC_ARG_WITH(ucdn,
 	[AS_HELP_STRING([--with-ucdn=@<:@yes/no@:>@],
 			[Use builtin UCDN library @<:@default=yes@:>@])],,
@@ -525,6 +537,7 @@ AC_MSG_NOTICE([
 Build configuration:
 
 Unicode callbacks (you want at least one):
+	Extern:			${have_exunicode}
 	Builtin (UCDN):		${have_ucdn}
 	Glib:			${have_glib}
 	ICU:			${have_icu}
