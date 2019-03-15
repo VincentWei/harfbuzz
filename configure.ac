@@ -310,6 +310,11 @@ if test "x$with_exunicode" = "xyes"; then
 fi
 if $have_exunicode; then
 	AC_DEFINE(HAVE_EXUNICODE, 1, [Have external Unicode functions])
+	HBLIBSUFFIX="ex"
+	AC_SUBST(HBLIBSUFFIX)
+else
+	HBLIBSUFFIX=""
+	AC_SUBST(HBLIBSUFFIX)
 fi
 
 AC_ARG_WITH(ucdn,

@@ -13,10 +13,10 @@ TESTS =
 check_PROGRAMS =
 
 # Convenience targets:
-lib: $(BUILT_SOURCES) libharfbuzz.la
+lib: $(BUILT_SOURCES) libharfbuzz@HBLIBSUFFIX@.la
 libs: $(BUILT_SOURCES) $(lib_LTLIBRARIES)
 
-lib_LTLIBRARIES = libharfbuzz.la
+lib_LTLIBRARIES = libharfbuzz@HBLIBSUFFIX@.la
 
 include Makefile.sources
 
@@ -140,12 +140,12 @@ endif
 @CODE_COVERAGE_RULES@
 
 base_link_flags = $(AM_LDFLAGS) -lm -version-info $(HB_LIBTOOL_VERSION_INFO) -no-undefined
-libharfbuzz_la_LINK = $(chosen_linker) $(libharfbuzz_la_LDFLAGS)
-libharfbuzz_la_SOURCES = $(HBSOURCES) $(HBHEADERS)
-libharfbuzz_la_CPPFLAGS = $(HBCFLAGS) $(CODE_COVERAGE_CFLAGS)
-libharfbuzz_la_LDFLAGS = $(base_link_flags) $(export_symbols) $(CODE_COVERAGE_LDFLAGS)
-libharfbuzz_la_LIBADD = $(HBLIBS)
-EXTRA_libharfbuzz_la_DEPENDENCIES = $(harfbuzz_def_dependency)
+libharfbuzz@HBLIBSUFFIX@_la_LINK = $(chosen_linker) $(libharfbuzz@HBLIBSUFFIX@_la_LDFLAGS)
+libharfbuzz@HBLIBSUFFIX@_la_SOURCES = $(HBSOURCES) $(HBHEADERS)
+libharfbuzz@HBLIBSUFFIX@_la_CPPFLAGS = $(HBCFLAGS) $(CODE_COVERAGE_CFLAGS)
+libharfbuzz@HBLIBSUFFIX@_la_LDFLAGS = $(base_link_flags) $(export_symbols) $(CODE_COVERAGE_LDFLAGS)
+libharfbuzz@HBLIBSUFFIX@_la_LIBADD = $(HBLIBS)
+EXTRA_libharfbuzz@HBLIBSUFFIX@_la_DEPENDENCIES = $(harfbuzz_def_dependency)
 pkginclude_HEADERS = $(HBHEADERS)
 nodist_pkginclude_HEADERS =
 pkgconfigdir = $(libdir)/pkgconfig
@@ -154,12 +154,12 @@ cmakedir = $(libdir)/cmake/harfbuzz
 cmake_DATA = harfbuzz-config.cmake
 EXTRA_DIST += hb-version.h.in harfbuzz.pc.in harfbuzz-config.cmake.in
 
-lib_LTLIBRARIES += libharfbuzz-subset.la
-libharfbuzz_subset_la_SOURCES = $(HB_SUBSET_sources)
-libharfbuzz_subset_la_CPPFLAGS = $(HBCFLAGS) $(CODE_COVERAGE_CFLAGS)
-libharfbuzz_subset_la_LDFLAGS = $(base_link_flags) $(export_symbols_subset) $(CODE_COVERAGE_LDFLAGS)
-libharfbuzz_subset_la_LIBADD = libharfbuzz.la
-EXTRA_libharfbuzz_subset_la_DEPENDENCIES = $(harfbuzz_subset_def_dependency)
+lib_LTLIBRARIES += libharfbuzz@HBLIBSUFFIX@-subset.la
+libharfbuzz@HBLIBSUFFIX@_subset_la_SOURCES = $(HB_SUBSET_sources)
+libharfbuzz@HBLIBSUFFIX@_subset_la_CPPFLAGS = $(HBCFLAGS) $(CODE_COVERAGE_CFLAGS)
+libharfbuzz@HBLIBSUFFIX@_subset_la_LDFLAGS = $(base_link_flags) $(export_symbols_subset) $(CODE_COVERAGE_LDFLAGS)
+libharfbuzz@HBLIBSUFFIX@_subset_la_LIBADD = libharfbuzz@HBLIBSUFFIX@.la
+EXTRA_libharfbuzz@HBLIBSUFFIX@_subset_la_DEPENDENCIES = $(harfbuzz_subset_def_dependency)
 pkginclude_HEADERS += $(HB_SUBSET_headers)
 pkgconfig_DATA += harfbuzz-subset.pc
 EXTRA_DIST += harfbuzz-subset.pc.in
@@ -171,12 +171,12 @@ HBLIBS += $(ICU_LIBS)
 HBSOURCES += $(HB_ICU_sources)
 HBHEADERS += $(HB_ICU_headers)
 else
-lib_LTLIBRARIES += libharfbuzz-icu.la
-libharfbuzz_icu_la_SOURCES = $(HB_ICU_sources)
-libharfbuzz_icu_la_CPPFLAGS = $(HBCFLAGS) $(ICU_CFLAGS) $(CODE_COVERAGE_CFLAGS)
-libharfbuzz_icu_la_LDFLAGS = $(base_link_flags) $(export_symbols_icu) $(CODE_COVERAGE_LDFLAGS)
-libharfbuzz_icu_la_LIBADD = $(ICU_LIBS) libharfbuzz.la
-EXTRA_libharfbuzz_icu_la_DEPENDENCIES = $(harfbuzz_icu_def_dependency)
+lib_LTLIBRARIES += libharfbuzz@HBLIBSUFFIX@-icu.la
+libharfbuzz@HBLIBSUFFIX@_icu_la_SOURCES = $(HB_ICU_sources)
+libharfbuzz@HBLIBSUFFIX@_icu_la_CPPFLAGS = $(HBCFLAGS) $(ICU_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+libharfbuzz@HBLIBSUFFIX@_icu_la_LDFLAGS = $(base_link_flags) $(export_symbols_icu) $(CODE_COVERAGE_LDFLAGS)
+libharfbuzz@HBLIBSUFFIX@_icu_la_LIBADD = $(ICU_LIBS) libharfbuzz@HBLIBSUFFIX@.la
+EXTRA_libharfbuzz@HBLIBSUFFIX@_icu_la_DEPENDENCIES = $(harfbuzz_icu_def_dependency)
 pkginclude_HEADERS += $(HB_ICU_headers)
 pkgconfig_DATA += harfbuzz-icu.pc
 endif
@@ -184,14 +184,14 @@ endif
 EXTRA_DIST += harfbuzz-icu.pc.in
 
 if HAVE_GOBJECT
-lib_LTLIBRARIES += libharfbuzz-gobject.la
-libharfbuzz_gobject_la_LINK = $(chosen_linker) $(libharfbuzz_gobject_la_LDFLAGS)
-libharfbuzz_gobject_la_SOURCES = $(HB_GOBJECT_DIST_sources)
-nodist_libharfbuzz_gobject_la_SOURCES = $(HB_GOBJECT_NODIST_sources)
-libharfbuzz_gobject_la_CPPFLAGS = $(HBCFLAGS) $(GOBJECT_CFLAGS) $(CODE_COVERAGE_CFLAGS)
-libharfbuzz_gobject_la_LDFLAGS = $(base_link_flags) $(CODE_COVERAGE_LDFLAGS)
-libharfbuzz_gobject_la_LIBADD = $(GOBJECT_LIBS) libharfbuzz.la
-EXTRA_libharfbuzz_gobject_la_DEPENDENCIES = $(harfbuzz_gobject_def_dependency)
+lib_LTLIBRARIES += libharfbuzz@HBLIBSUFFIX@-gobject.la
+libharfbuzz@HBLIBSUFFIX@_gobject_la_LINK = $(chosen_linker) $(libharfbuzz@HBLIBSUFFIX@_gobject_la_LDFLAGS)
+libharfbuzz@HBLIBSUFFIX@_gobject_la_SOURCES = $(HB_GOBJECT_DIST_sources)
+nodist_libharfbuzz@HBLIBSUFFIX@_gobject_la_SOURCES = $(HB_GOBJECT_NODIST_sources)
+libharfbuzz@HBLIBSUFFIX@_gobject_la_CPPFLAGS = $(HBCFLAGS) $(GOBJECT_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+libharfbuzz@HBLIBSUFFIX@_gobject_la_LDFLAGS = $(base_link_flags) $(CODE_COVERAGE_LDFLAGS)
+libharfbuzz@HBLIBSUFFIX@_gobject_la_LIBADD = $(GOBJECT_LIBS) libharfbuzz@HBLIBSUFFIX@.la
+EXTRA_libharfbuzz@HBLIBSUFFIX@_gobject_la_DEPENDENCIES = $(harfbuzz_gobject_def_dependency)
 pkginclude_HEADERS += $(HB_GOBJECT_DIST_headers)
 nodist_pkginclude_HEADERS += $(HB_GOBJECT_NODIST_headers)
 pkgconfig_DATA += harfbuzz-gobject.pc
@@ -318,34 +318,34 @@ bin_PROGRAMS =
 
 main_SOURCES = main.cc
 main_CPPFLAGS = $(HBCFLAGS)
-main_LDADD = libharfbuzz.la $(HBLIBS)
+main_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 
 test_SOURCES = test.cc
 test_CPPFLAGS = $(HBCFLAGS) $(FREETYPE_CFLAGS)
-test_LDADD = libharfbuzz.la $(HBLIBS) $(FREETYPE_LIBS)
+test_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS) $(FREETYPE_LIBS)
 
 test_buffer_serialize_SOURCES = test-buffer-serialize.cc
 test_buffer_serialize_CPPFLAGS = $(HBCFLAGS)
-test_buffer_serialize_LDADD = libharfbuzz.la $(HBLIBS)
+test_buffer_serialize_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 
 test_name_table_SOURCES = test-name-table.cc
 test_name_table_CPPFLAGS = $(HBCFLAGS)
-test_name_table_LDADD = libharfbuzz.la $(HBLIBS)
+test_name_table_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 
 test_size_params_SOURCES = test-size-params.cc
 test_size_params_CPPFLAGS = $(HBCFLAGS)
-test_size_params_LDADD = libharfbuzz.la $(HBLIBS)
+test_size_params_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 
 test_would_substitute_SOURCES = test-would-substitute.cc
 test_would_substitute_CPPFLAGS = $(HBCFLAGS) $(FREETYPE_CFLAGS)
-test_would_substitute_LDADD = libharfbuzz.la $(HBLIBS) $(FREETYPE_LIBS)
+test_would_substitute_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS) $(FREETYPE_LIBS)
 
 if HAVE_FREETYPE
 if HAVE_CAIRO_FT
 noinst_PROGRAMS += test-ot-color
 test_ot_color_SOURCES = test-ot-color.cc
 test_ot_color_CPPFLAGS = $(HBCFLAGS) $(FREETYPE_CFLAGS) $(CAIRO_FT_CFLAGS)
-test_ot_color_LDADD = libharfbuzz.la $(HBLIBS) $(FREETYPE_LIBS) $(CAIRO_LIBS) $(CAIRO_FT_LIBS)
+test_ot_color_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS) $(FREETYPE_LIBS) $(CAIRO_LIBS) $(CAIRO_FT_LIBS)
 endif # HAVE_CAIRO_FT
 endif # HAVE_FREETYPE
 
@@ -373,20 +373,20 @@ check_PROGRAMS += \
 	$(NULL)
 dump_indic_data_SOURCES = dump-indic-data.cc hb-ot-shape-complex-indic-table.cc
 dump_indic_data_CPPFLAGS = $(HBCFLAGS)
-dump_indic_data_LDADD = libharfbuzz.la $(HBLIBS)
+dump_indic_data_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 dump_khmer_data_SOURCES = dump-khmer-data.cc hb-ot-shape-complex-indic-table.cc
 dump_khmer_data_CPPFLAGS = $(HBCFLAGS)
-dump_khmer_data_LDADD = libharfbuzz.la $(HBLIBS)
+dump_khmer_data_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 dump_myanmar_data_SOURCES = dump-myanmar-data.cc hb-ot-shape-complex-indic-table.cc
 dump_myanmar_data_CPPFLAGS = $(HBCFLAGS)
-dump_myanmar_data_LDADD = libharfbuzz.la $(HBLIBS)
+dump_myanmar_data_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 dump_use_data_SOURCES = dump-use-data.cc hb-ot-shape-complex-use-table.cc
 dump_use_data_CPPFLAGS = $(HBCFLAGS)
-dump_use_data_LDADD = libharfbuzz.la $(HBLIBS)
+dump_use_data_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 
 COMPILED_TESTS = test-iter test-ot-tag test-unicode-ranges
 COMPILED_TESTS_CPPFLAGS = $(HBCFLAGS) -DMAIN -UNDEBUG
-COMPILED_TESTS_LDADD = libharfbuzz.la $(HBLIBS)
+COMPILED_TESTS_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS)
 check_PROGRAMS += $(COMPILED_TESTS)
 TESTS += $(COMPILED_TESTS)
 
@@ -417,7 +417,7 @@ INTROSPECTION_SCANNER_ARGS = -I$(srcdir) -n hb --identifier-prefix=hb_ --warn-al
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 INTROSPECTION_SCANNER_ENV = CC="$(CC)"
 
-HarfBuzz-0.0.gir: libharfbuzz.la libharfbuzz-gobject.la
+HarfBuzz-0.0.gir: libharfbuzz@HBLIBSUFFIX@.la libharfbuzz@HBLIBSUFFIX@-gobject.la
 HarfBuzz_0_0_gir_INCLUDES = GObject-2.0
 HarfBuzz_0_0_gir_CFLAGS = \
 	$(INCLUDES) \
@@ -433,8 +433,8 @@ HarfBuzz_0_0_gir_CFLAGS = \
 	-DHB_EXTERN= \
 	$(NULL)
 HarfBuzz_0_0_gir_LIBS = \
-	libharfbuzz.la \
-	libharfbuzz-gobject.la \
+	libharfbuzz@HBLIBSUFFIX@.la \
+	libharfbuzz@HBLIBSUFFIX@-gobject.la \
 	$(NULL)
 HarfBuzz_0_0_gir_FILES = \
 	$(HBHEADERS) \

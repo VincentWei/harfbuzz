@@ -208,7 +208,7 @@ hb_glib_unicode_combining_class (hb_unicode_funcs_t *ufuncs HB_UNUSED,
 				 void               *user_data HB_UNUSED)
 
 {
-  return (hb_unicode_combining_class_t) g_unichar_combining_class (unicode);
+  return (hb_unicode_combining_class_t) UCharGetCategory (unicode);
 }
 
 static hb_unicode_general_category_t
