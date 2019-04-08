@@ -28,7 +28,7 @@
 #define HB_ARRAY_HH
 
 #include "hb.hh"
-#include "hb-dsalgs.hh"
+#include "hb-algs.hh"
 #include "hb-iter.hh"
 #include "hb-null.hh"
 
@@ -37,22 +37,29 @@ template <typename Type>
 struct hb_sorted_array_t;
 
 template <typename Type>
-struct hb_array_t :
-	hb_iter_t<hb_array_t<Type>, Type>,
-	hb_iter_mixin_t<hb_array_t<Type>, Type>
+struct hb_array_t : hb_iter_with_fallback_t<hb_array_t<Type>, Type&>
 {
   /*
    * Constructors.
    */
   hb_array_t () : arrayZ (nullptr), length (0) {}
+  hb_array_t (const hb_array_t<Type> &o) : arrayZ (o.arrayZ), length (o.length) {}
+  template <typename U = Type, hb_enable_if (hb_is_const (U))>
+  hb_array_t (const hb_array_t<hb_remove_const (Type)> &o) : arrayZ (o.arrayZ), length (o.length) {}
+
   hb_array_t (Type *array_, unsigned int length_) : arrayZ (array_), length (length_) {}
   template <unsigned int length_> hb_array_t (Type (&array_)[length_]) : arrayZ (array_), length (length_) {}
 
-
+  template <typename U = Type, hb_enable_if (hb_is_const (U))>
+  hb_array_t& operator = (const hb_array_t<hb_remove_const (Type)> &o)
+  { arrayZ = o.arrayZ; length = o.length; return *this; }
+  hb_array_t& operator = (const hb_array_t &o)
+  { arrayZ = o.arrayZ; length = o.length; return *this; }
   /*
    * Iterator implementation.
    */
-  typedef Type __item_type__;
+  typedef Type& __item_t__;
+  static constexpr bool is_random_access_iterator = true;
   Type& __item_at__ (unsigned i) const
   {
     if (unlikely (i >= length)) return CrapOrNull (Type);
@@ -72,13 +79,15 @@ struct hb_array_t :
     length -= n;
   }
   unsigned __len__ () const { return length; }
-  bool __random_access__ () const { return true; }
 
   /* Extra operators.
    */
   Type * operator & () const { return arrayZ; }
   operator hb_array_t<const Type> () { return hb_array_t<const Type> (arrayZ, length); }
   template <typename T> operator T * () const { return arrayZ; }
+
+  bool operator == (const hb_array_t &o) const;
+  uint32_t hash () const;
 
   /*
    * Compare, Sort, and Search.
@@ -183,7 +192,6 @@ template <typename T, unsigned int length_> inline hb_array_t<T>
 hb_array (T (&array_)[length_])
 { return hb_array_t<T> (array_); }
 
-
 enum hb_bfind_not_found_t
 {
   HB_BFIND_NOT_FOUND_DONT_STORE,
@@ -193,12 +201,18 @@ enum hb_bfind_not_found_t
 
 template <typename Type>
 struct hb_sorted_array_t :
-	hb_sorted_iter_t<hb_sorted_array_t<Type>, Type>,
-	hb_array_t<Type>,
-	hb_iter_mixin_t<hb_sorted_array_t<Type>, Type>
+	hb_iter_t<hb_sorted_array_t<Type>, Type&>,
+	hb_array_t<Type>
 {
+  typedef hb_iter_t<hb_sorted_array_t<Type>, Type&> iter_base_t;
+  HB_ITER_USING (iter_base_t);
+  static constexpr bool is_random_access_iterator = true;
+  static constexpr bool is_sorted_iterator = true;
+
   hb_sorted_array_t () : hb_array_t<Type> () {}
   hb_sorted_array_t (const hb_array_t<Type> &o) : hb_array_t<Type> (o) {}
+  template <typename U = Type, hb_enable_if (hb_is_const (U))>
+  hb_sorted_array_t (const hb_sorted_array_t<hb_remove_const (Type)> &o) : hb_array_t<Type> (o) {}
   hb_sorted_array_t (Type *array_, unsigned int length_) : hb_array_t<Type> (array_, length_) {}
   template <unsigned int length_> hb_sorted_array_t (Type (&array_)[length_]) : hb_array_t<Type> (array_) {}
 
@@ -269,9 +283,30 @@ template <typename T, unsigned int length_> inline hb_sorted_array_t<T>
 hb_sorted_array (T (&array_)[length_])
 { return hb_sorted_array_t<T> (array_); }
 
+template <typename T>
+bool hb_array_t<T>::operator == (const hb_array_t<T> &o) const
+{
+  return length == o.length &&
+  + hb_zip (*this, o)
+  | hb_map ([] (hb_pair_t<T&, T&> &&_) -> bool { return _.first == _.second; })
+  | hb_all
+  ;
+}
+template <typename T>
+uint32_t hb_array_t<T>::hash () const
+{
+  return
+  + hb_iter (*this)
+  | hb_map (hb_hash)
+  | hb_reduce ([] (uint32_t a, uint32_t b) -> uint32_t { return a * 31 + b; }, 0)
+  ;
+}
 
 typedef hb_array_t<const char> hb_bytes_t;
 typedef hb_array_t<const unsigned char> hb_ubytes_t;
 
+/* TODO Specialize opeator==/hash() for hb_bytes_t and hb_ubytes_t. */
+//template <>
+//uint32_t hb_array_t<const char>::hash () const { return 0; }
 
 #endif /* HB_ARRAY_HH */

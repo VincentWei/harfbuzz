@@ -16,9 +16,10 @@ matrix:
     - os: linux
       compiler: gcc
       script:
-        # Remove these two lines when Travis updated its distro
-        - wget http://download.savannah.gnu.org/releases/freetype/freetype-2.9.tar.bz2 && tar xf freetype-2.9.tar.bz2 && cd freetype-2.9 && ./autogen.sh && ./configure && make -j4 && cd ..
-        - export LD_LIBRARY_PATH="$PWD/freetype-2.9/objs/.libs"
+        # Remove the following three lines when Travis updates its distro
+        - export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
+        - export LD_LIBRARY_PATH="$HOME/.local/lib"
+        - bash .ci/build-freetype.sh
 
         - ./autogen.sh
         - ./configure $CONFIGURE_OPTS --enable-gtk-doc --enable-code-coverage
@@ -34,28 +35,23 @@ matrix:
     - os: linux
       compiler: clang
       script:
-        # Remove these two lines when Travis updated its distro
-        - wget http://download.savannah.gnu.org/releases/freetype/freetype-2.9.tar.bz2 && tar xf freetype-2.9.tar.bz2 && cd freetype-2.9 && ./autogen.sh && ./configure && make -j4 && cd ..
-        - export LD_LIBRARY_PATH="$PWD/freetype-2.9/objs/.libs"
+        # Remove the following three lines when Travis updates its distro
+        - export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
+        - export LD_LIBRARY_PATH="$HOME/.local/lib"
+        - bash .ci/build-freetype.sh
 
         - ./autogen.sh
         - ./configure $CONFIGURE_OPTS
         - make
         - make check || .ci/fail.sh
 
-    - os: osx
-      compiler: clang
-      install:
-        - brew link --force icu4c
-      script:
-        - ./autogen.sh
-        - ./configure $CONFIGURE_OPTS --with-coretext
-        - make
-        - make check || .ci/fail.sh
-
 notifications:
   irc: "irc.freenode.org#harfbuzz"
   email: harfbuzz-bots-chatter@googlegroups.com
+
+cache:
+  directories:
+    - /home/travis/.local
 
 addons:
   apt:
@@ -70,14 +66,6 @@ addons:
       - libicu-dev # for extra unicode functions
       - libgraphite2-dev # for extra shapers
       #- libgirepository1.0-dev # for gobject-introspection
-  homebrew:
-    packages:
-      - cairo
-      - freetype
-      - glib
-      - graphite2
-      - icu4c
-      #- gobject-introspection
 
   coverity_scan:
     project:
