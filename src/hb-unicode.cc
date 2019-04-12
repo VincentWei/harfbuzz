@@ -148,11 +148,11 @@ hb_unicode_funcs_get_default ()
      assert (0);
      return hb_unicode_funcs_get_empty ();
   }
-#elif defined(HAVE_UCDN)
+#elif !defined(HB_NO_UNICODE_FUNCS) && defined(HAVE_UCDN)
   return hb_ucdn_get_unicode_funcs ();
-#elif defined(HAVE_GLIB)
+#elif !defined(HB_NO_UNICODE_FUNCS) && defined(HAVE_GLIB)
   return hb_glib_get_unicode_funcs ();
-#elif defined(HAVE_ICU) && defined(HAVE_ICU_BUILTIN)
+#elif !defined(HB_NO_UNICODE_FUNCS) && defined(HAVE_ICU) && defined(HAVE_ICU_BUILTIN)
   return hb_icu_get_unicode_funcs ();
 #else
 #define HB_UNICODE_FUNCS_NIL 1
