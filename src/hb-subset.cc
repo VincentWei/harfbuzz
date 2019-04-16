@@ -47,7 +47,10 @@
 #include "hb-ot-layout-gpos-table.hh"
 
 
-static HB_UNUSED unsigned int
+HB_UNUSED static inline unsigned int
+_plan_estimate_subset_table_size (hb_subset_plan_t *plan,
+				  unsigned int table_len);
+static inline unsigned int
 _plan_estimate_subset_table_size (hb_subset_plan_t *plan,
 				  unsigned int table_len)
 {
