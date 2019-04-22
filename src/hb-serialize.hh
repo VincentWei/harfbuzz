@@ -272,7 +272,7 @@ struct hb_serialize_context_t
 
     auto& link = *current->links.push ();
     link.is_wide = sizeof (T) == 4;
-    link.position = (const char *) &ofs - (const char *) base;
+    link.position = (const char *) &ofs - current->head;
     link.bias = (const char *) base - current->head;
     link.objidx = objidx;
   }
@@ -294,12 +294,14 @@ struct hb_serialize_context_t
 	if (link.is_wide)
 	{
 	  auto &off = * ((BEInt<uint32_t, 4> *) (parent.head + link.position));
+	  assert (0 == off);
 	  off = offset;
 	  propagate_error (off == offset);
 	}
 	else
 	{
 	  auto &off = * ((BEInt<uint16_t, 2> *) (parent.head + link.position));
+	  assert (0 == off);
 	  off = offset;
 	  propagate_error (off == offset);
 	}
@@ -358,6 +360,24 @@ struct hb_serialize_context_t
     memcpy (ret, &obj, size);
     return ret;
   }
+
+  template <typename Type> auto
+  _copy (const Type &obj, hb_priority<1>) const HB_RETURN (Type *, obj.copy (this))
+
+  template <typename Type> auto
+  _copy (const Type &obj, hb_priority<0>) const -> decltype (&(obj = obj))
+  {
+    Type *ret = this->allocate_size<Type> (sizeof (Type));
+    if (unlikely (!ret)) return nullptr;
+    *ret = obj;
+    return ret;
+  }
+
+  /* Like embed, but active: calls obj.operator=() or obj.copy() to transfer data
+   * instead of memcpy(). */
+  template <typename Type>
+  Type *copy (const Type &obj) { return _copy (obj, hb_prioritize); }
+
   template <typename Type>
   hb_serialize_context_t &operator << (const Type &obj) { embed (obj); return *this; }
 

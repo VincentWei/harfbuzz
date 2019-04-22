@@ -37,7 +37,7 @@
 
 /* Global nul-content Null pool.  Enlarge as necessary. */
 
-#define HB_NULL_POOL_SIZE 9880
+#define HB_NULL_POOL_SIZE 384
 
 /* Use SFINAE to sniff whether T has min_size; in which case return T::null_size,
  * otherwise return sizeof(T). */
@@ -95,7 +95,7 @@ struct Null {
 template <typename QType>
 struct NullHelper
 {
-  typedef hb_remove_const (hb_remove_reference (QType)) Type;
+  typedef hb_remove_const<hb_remove_reference<QType> > Type;
   static const Type & get_null () { return Null<Type>::get_null (); }
 };
 #define Null(Type) NullHelper<Type>::get_null ()
@@ -148,7 +148,7 @@ static inline Type& Crap () {
 template <typename QType>
 struct CrapHelper
 {
-  typedef hb_remove_const (hb_remove_reference (QType)) Type;
+  typedef hb_remove_const<hb_remove_reference<QType> > Type;
   static Type & get_crap () { return Crap<Type> (); }
 };
 #define Crap(Type) CrapHelper<Type>::get_crap ()
@@ -171,7 +171,7 @@ struct CrapOrNullHelper<const Type> {
 template <typename P>
 struct hb_nonnull_ptr_t
 {
-  typedef hb_remove_pointer (P) T;
+  typedef hb_remove_pointer<P> T;
 
   hb_nonnull_ptr_t (T *v_ = nullptr) : v (v_) {}
   T * operator = (T *v_)   { return v = v_; }
