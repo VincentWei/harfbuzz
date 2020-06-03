@@ -296,15 +296,18 @@ $(srcdir)/%.hh: $(srcdir)/%.rl
 	$(AM_V_GEN)(cd $(srcdir) && $(RAGEL) -e -F1 -o "$*.hh" "$*.rl") \
 	|| ($(RM) "$@"; false)
 
+bin_PROGRAMS =
 noinst_PROGRAMS = \
+	$(NULL)
+
+if !HAVE_EXUNICODE
+noinst_PROGRAMS += \
 	main \
 	test \
 	test-buffer-serialize \
 	test-ot-name \
 	test-gpos-size-params \
-	test-gsub-would-substitute \
-	$(NULL)
-bin_PROGRAMS =
+	test-gsub-would-substitute
 
 main_SOURCES = main.cc
 main_CPPFLAGS = $(HBCFLAGS)
@@ -338,6 +341,7 @@ test_ot_color_CPPFLAGS = $(HBCFLAGS) $(FREETYPE_CFLAGS) $(CAIRO_FT_CFLAGS)
 test_ot_color_LDADD = libharfbuzz@HBLIBSUFFIX@.la $(HBLIBS) $(FREETYPE_LIBS) $(CAIRO_LIBS) $(CAIRO_FT_LIBS)
 endif # HAVE_CAIRO_FT
 endif # HAVE_FREETYPE
+endif # !HAVE_EXUNICODE
 
 dist_check_SCRIPTS = \
 	check-c-linkage-decls.sh \

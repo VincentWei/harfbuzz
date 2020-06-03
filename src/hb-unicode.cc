@@ -132,19 +132,16 @@ extern "C" hb_unicode_funcs_t *hb_glib_get_unicode_funcs ();
 extern "C" hb_unicode_funcs_t *hb_icu_get_unicode_funcs ();
 
 #ifdef HAVE_EXUNICODE
-/*
- * You should implement your own hb_get_unicode_funcs() externally.
- * Add assign the address to the variable __hb_extern_get_unicode_funcs.
- */
-typedef hb_unicode_funcs_t *(*hb_get_unicode_funcs) ();
-extern "C" hb_get_unicode_funcs __hb_extern_get_unicode_funcs;
-hb_get_unicode_funcs __hb_extern_get_unicode_funcs;
+extern "C" hb_unicode_funcs_t *hb_ext_get_unicode_funcs ();
 #endif
 
 hb_unicode_funcs_t *
 hb_unicode_funcs_get_default ()
 {
 #ifdef HAVE_EXUNICODE
+  /* You should implement your own hb_ext_get_unicode_funcs() externally. */
+  return hb_ext_get_unicode_funcs ();
+/*
   if (__hb_extern_get_unicode_funcs)
      return __hb_extern_get_unicode_funcs ();
   else {
@@ -152,6 +149,7 @@ hb_unicode_funcs_get_default ()
      assert (0);
      return hb_unicode_funcs_get_empty ();
   }
+*/
 #elif !defined(HB_NO_UNICODE_FUNCS) && !defined(HB_NO_UCD)
   return hb_ucd_get_unicode_funcs ();
 #elif !defined(HB_NO_UNICODE_FUNCS) && defined(HAVE_GLIB)
